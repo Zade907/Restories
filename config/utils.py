@@ -5,6 +5,7 @@ Core utilities: logging, config loading, retry decorators, rate limiting.
 import json
 import logging
 import os
+import random
 import time
 import functools
 from logging.handlers import RotatingFileHandler
@@ -127,3 +128,51 @@ def ensure_dir(path: str | Path) -> Path:
     p = Path(path)
     p.mkdir(parents=True, exist_ok=True)
     return p
+
+
+REDDIT_USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
+]
+
+
+def get_random_user_agent() -> str:
+    """Return a realistic browser user agent for Reddit requests."""
+    return random.choice(REDDIT_USER_AGENTS)
+
+
+def build_reddit_headers(extra_headers: Optional[dict[str, str]] = None) -> dict[str, str]:
+    """Build request headers for Reddit RSS/JSON access."""
+    headers = {
+        "User-Agent": get_random_user_agent(),
+        "Accept": "application/rss+xml, application/xml;q=0.9, application/json;q=0.8, */*;q=0.7",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+    }
+    if extra_headers:
+        headers.update(extra_headers)
+    return headers
+
+
+def create_cached_session(cache_name: str, expire_after_seconds: int = 3600):
+    """Create a requests-cache session with SQLite storage."""
+    try:
+        import requests_cache
+    except ImportError as exc:
+        raise ImportError(
+            "requests-cache is required for Reddit fetching. Install it with: pip install requests-cache"
+        ) from exc
+
+    session = requests_cache.CachedSession(
+        cache_name=cache_name,
+        backend="sqlite",
+        expire_after=expire_after_seconds,
+        stale_if_error=True,
+        allowable_methods=("GET",),
+    )
+    session.headers.update(build_reddit_headers())
+    return session
