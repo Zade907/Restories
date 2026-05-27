@@ -1,0 +1,46 @@
+# Environment
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Output (large files)
+output/audio/*.mp3
+output/videos/*.mp4
+output/temp/
+
+# Database
+database/*.db
+
+# YouTube credentials (sensitive!)
+config/client_secrets.json
+config/youtube_credentials.json
+
+# Logs
+logs/*.log
+
+# Whisper model cache
+~/.cache/whisper/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Gameplay assets (user-provided, often large)
+assets/gameplay/*.mp4
+assets/gameplay/*.mov

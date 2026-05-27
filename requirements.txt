@@ -1,0 +1,56 @@
+# =============================================================
+# Reddit Shorts Factory - Python Dependencies
+# =============================================================
+
+# Core
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Reddit
+praw>=7.7.1
+
+# LLM providers
+google-generativeai>=0.5.0      # Gemini (optional, for SDK usage)
+
+# TTS
+edge-tts>=6.1.9                 # Microsoft neural TTS (free, primary)
+# TTS>=0.22.0                   # Coqui TTS (local fallback, heavier install)
+
+# Speech-to-text / subtitles
+# Optional debug fallback only:
+# openai-whisper>=20231117
+# OR: faster-whisper>=0.10.0    # Faster alternative
+
+# Video processing
+moviepy>=1.0.3
+ffmpeg-python>=0.2.0
+# Note: ffmpeg binary must be installed separately (see README)
+
+# Subtitles
+pysrt>=1.1.2
+
+# YouTube upload
+google-api-python-client>=2.111.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.2.0
+
+# Scheduler
+apscheduler>=3.10.4
+
+# Dashboard
+streamlit>=1.31.0
+pandas>=2.0.0
+
+# Database
+# sqlite3 is built-in to Python
+
+# Image processing (for thumbnails)
+Pillow>=10.0.0
+
+# Utilities
+tqdm>=4.66.0
+colorlog>=6.8.0
+
+# Optional: faster model inference
+# torch>=2.0.0                  # GPU acceleration for Whisper
+# transformers>=4.36.0          # HuggingFace models

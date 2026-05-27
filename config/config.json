@@ -1,0 +1,95 @@
+{
+  "reddit": {
+    "subreddits": [
+      "AITAH",
+      "confession",
+      "relationship_advice",
+      "TrueOffMyChest",
+      "nosleep",
+      "tifu"
+    ],
+    "min_upvotes": 1000,
+    "min_comments": 50,
+    "max_char_limit": 3000,
+    "min_char_limit": 300,
+    "post_limit": 25,
+    "time_filter": "day"
+  },
+  "llm": {
+    "provider_order": ["gemini", "openrouter", "ollama"],
+    "ollama_model": "mistral",
+    "openrouter_model": "mistralai/mistral-7b-instruct:free",
+    "gemini_model": "gemini-1.5-flash",
+    "max_tokens": 1024,
+    "temperature": 0.7
+  },
+  "tts": {
+    "provider": "edge-tts",
+    "voice": "en-US-AriaNeural",
+    "voice_styles": {
+      "dramatic": "en-US-AriaNeural",
+      "neutral": "en-US-GuyNeural",
+      "female": "en-US-JennyNeural",
+      "male": "en-US-EricNeural"
+    },
+    "rate": "+10%",
+    "volume": "+0%",
+    "pitch": "+0Hz"
+  },
+  "music": {
+    "enabled": true,
+    "root": "assets/music",
+    "volume": 0.12,
+    "default_mood": "suspenseful"
+  },
+  "video": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "format": "mp4",
+    "gameplay_folder": "assets/gameplay",
+    "output_folder": "output/videos",
+    "subtitle_font_size": 55,
+    "subtitle_color": "white",
+    "subtitle_highlight_color": "#FFD700",
+    "subtitle_bg_color": "black",
+    "subtitle_bg_opacity": 0.6
+  },
+  "subtitles": {
+    "mode": "script",
+    "whisper_model": "base",
+    "debug_whisper": false,
+    "format": "ass",
+    "burn_into_video": true
+  },
+  "quality": {
+    "min_score": 58
+  },
+  "youtube": {
+    "category_id": "22",
+    "privacy_status": "private",
+    "made_for_kids": false,
+    "tags_limit": 500
+  },
+  "scheduler": {
+    "enabled": false,
+    "interval_hours": 6,
+    "max_videos_per_run": 3
+  },
+  "database": {
+    "path": "database/reddit_shorts.db"
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/pipeline.log",
+    "max_bytes": 10485760,
+    "backup_count": 5
+  },
+  "pipeline": {
+    "retry_attempts": 3,
+    "retry_delay": 5,
+    "rate_limit_delay": 2,
+    "parallel_workers": 2,
+    "review_mode_default": true
+  }
+}
