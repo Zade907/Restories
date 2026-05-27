@@ -5,9 +5,8 @@
 # Core
 python-dotenv>=1.0.0
 requests>=2.31.0
-
-# Reddit
-praw>=7.7.1
+feedparser>=6.0.11
+requests-cache>=1.2.1
 
 # LLM providers
 google-generativeai>=0.5.0      # Gemini (optional, for SDK usage)

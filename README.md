@@ -12,7 +12,7 @@ Reddit Post → AI Script → TTS Narration → Subtitles → Video Composition 
 
 | Feature          | Tool                                   |
 | ---------------- | -------------------------------------- |
-| Reddit scraping  | PRAW                                   |
+| Reddit scraping  | RSS feeds + public JSON endpoints      |
 | Hook generation  | Gemini / OpenRouter / Ollama           |
 | Script rewriting | Gemini / OpenRouter / Ollama           |
 | Text-to-speech   | Edge-TTS (Microsoft Neural) / Coqui    |
@@ -61,15 +61,14 @@ Download from https://ffmpeg.org/download.html and add to PATH.
 cp .env.example .env
 ```
 
-Edit `.env` with your credentials:
+Edit `.env` with your API keys:
 
 ```env
-REDDIT_CLIENT_ID=xxxxx
-REDDIT_CLIENT_SECRET=xxxxx
-REDDIT_USER_AGENT=RedditShortsBot/1.0 by YourUsername
 GEMINI_API_KEY=xxxxx        # Free at makersuite.google.com
 OPENROUTER_API_KEY=xxxxx    # Free tier at openrouter.ai
 ```
+
+Reddit authentication is no longer required for the MVP. The app now uses public RSS feeds and `.json` endpoints.
 
 ### 4. Add Gameplay Footage
 
@@ -100,12 +99,14 @@ python main.py dashboard
 
 ## 🔑 API Setup
 
-### Reddit API
+### Reddit Access
 
-1. Go to https://www.reddit.com/prefs/apps
-2. Click **Create App** → choose **script**
-3. Copy `client_id` (under app name) and `secret`
-4. Set `REDDIT_USER_AGENT` as `BotName/1.0 by u/YourUsername`
+The MVP uses public Reddit endpoints only:
+
+- RSS feeds for discovery, such as `https://www.reddit.com/r/AITAH/.rss`
+- Public `.json` endpoints for post metadata and content, such as `https://www.reddit.com/r/AITAH/top.json?t=day`
+
+No Reddit app approval or OAuth credentials are required.
 
 ### Gemini API (Free Tier)
 
@@ -156,7 +157,10 @@ reddit-shorts-factory/
 │   └── utils.py             # Logging, retry, config loading
 │
 ├── scraper/
-│   └── scraper.py           # Reddit scraping + scoring
+│   └── scraper.py           # Public Reddit scraping + scoring
+
+├── services/
+│   └── reddit_fetcher.py    # RSS / JSON fetcher with caching + throttling
 │
 ├── summarizer/
 │   └── summarizer.py        # LLM script generation + metadata
@@ -165,7 +169,7 @@ reddit-shorts-factory/
 │   └── tts_engine.py        # Edge-TTS + Coqui TTS
 │
 ├── subtitles/
-│   └── subtitle_gen.py      # Whisper + SRT/ASS generation
+│   └── subtitle_gen.py      # Script-timed SRT/ASS generation
 │
 ├── video_editor/
 │   └── editor.py            # FFmpeg video composition
@@ -197,7 +201,11 @@ Edit `config/config.json` to customize:
   "reddit": {
     "subreddits": ["AITAH", "confession", "tifu"],
     "min_upvotes": 1000,
-    "max_char_limit": 3000
+    "min_comments": 50,
+    "min_char_limit": 300,
+    "max_char_limit": 3000,
+    "post_limit": 25,
+    "time_filter": "day"
   },
   "llm": {
     "provider_order": ["gemini", "openrouter", "ollama"]
@@ -205,6 +213,13 @@ Edit `config/config.json` to customize:
   "tts": {
     "voice": "en-US-AriaNeural",
     "rate": "+10%"
+  },
+  "reddit_fetcher": {
+    "request_delay_seconds": 1.25,
+    "cache_seconds": 3600,
+    "max_retries": 4,
+    "backoff_factor": 1.8,
+    "json_limit": 25
   },
   "scheduler": {
     "enabled": true,
@@ -263,7 +278,7 @@ Features:
 
 ### "No posts scraped"
 
-- Check Reddit API credentials in `.env`
+- Check that the subreddit exists and the public RSS/JSON endpoints are reachable
 - Try increasing `min_upvotes` to lower threshold
 - Check `time_filter` — use `"week"` for more results
 

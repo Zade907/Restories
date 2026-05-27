@@ -68,7 +68,7 @@ def clean_text(text: str) -> str:
 
 
 class RedditFetcher:
-    """Fetch public Reddit posts without OAuth or PRAW."""
+    """Fetch public Reddit posts without OAuth."""
 
     def __init__(self):
         fetch_cfg = CONFIG.get("reddit_fetcher", {})
